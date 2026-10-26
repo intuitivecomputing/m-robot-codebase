@@ -1,0 +1,8 @@
+float32[] at          # seconds-from-start for each key-frame (length = N)
+float32[] duration    # duration of each key-frame            (length = N)
+string[]  joint_names # global joint order                    (length = J)
+float32[] joint_angles  # flattened:  [kf0-joint0, kf0-joint1, … kf1-joint0 …]
+                       # length must be N * J
+---
+bool   success
+string message

@@ -1,0 +1,7 @@
+# Request
+string text
+---
+# Response
+string audio_base64      # MP3 as Base-64
+bool   success
+string error_message

@@ -1,0 +1,10 @@
+# AudioPlay.action — m_interfaces
+# Goal definition: one track to play
+uint8[] data        # Raw WAV/PCM bytes; keep payloads small or switch to URI strings
+---
+# Result returned when playback ends or aborts
+int32 result_code   # 0 = OK, >0 = error codes defined by server
+string message      # Optional human-readable status
+---
+# Feedback streamed while playing
+float32 progress      # 0–100 percentage of audio played

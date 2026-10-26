@@ -1,0 +1,11 @@
+string child_input  
+string prompt  
+string context_before  
+string context_after
+string target_vocab 
+string technique_name  
+---
+string technique_name  
+float32 complexity_score  
+string support_level  
+string reply_text

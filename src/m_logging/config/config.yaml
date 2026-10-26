@@ -1,0 +1,4 @@
+# Conversation logger configuration
+output_directory: /root/m_ws/data/conversations
+auto_start: true
+flush_interval: 1.0

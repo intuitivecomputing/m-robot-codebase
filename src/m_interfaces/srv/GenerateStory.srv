@@ -1,0 +1,8 @@
+# Request
+string vocabs
+string num_stories_expected
+---
+# Response
+string story_paths     
+bool   success
+string error_message

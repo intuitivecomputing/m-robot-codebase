@@ -1,0 +1,12 @@
+# Goal
+string text                  # The text to be delivered with gestures and expressions
+---
+# Result
+int32 result_code          # 0 = success, non-zero = error code
+string message             # Status or error message
+float32 duration           # Total duration of delivery in seconds
+---
+# Feedback
+float32 progress           # Overall progress 0-100%
+string current_state       # Current state (e.g., "generating_behaviour", "executing_response")
+float32 audio_progress     # Audio playback progress 0-100%

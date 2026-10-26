@@ -1,0 +1,14 @@
+# Goal
+string delivery_packet_json  # JSON array of segments with text, expression, and gesture
+---
+# Result
+int32 result_code          # 0 = success, non-zero = error code
+string message             # Status or error message  
+float32 duration           # Total duration of delivery in seconds
+int32 segments_completed   # Number of segments successfully delivered
+---
+# Feedback
+float32 progress           # Overall progress 0-100%
+string current_state       # Current state (e.g., "processing_segment", "playing_audio", "pausing")
+int32 current_segment      # Current segment index (0-based)
+float32 segment_progress   # Current segment progress 0-100%

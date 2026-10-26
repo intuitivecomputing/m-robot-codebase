@@ -1,0 +1,4 @@
+string story_path
+---
+bool success
+string message

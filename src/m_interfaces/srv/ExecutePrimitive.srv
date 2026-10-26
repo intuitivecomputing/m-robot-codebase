@@ -1,0 +1,7 @@
+string function_name      # Name of the primitive function to execute
+string[] param_names      # Parameter names
+string[] param_values     # Parameter values as strings
+float32 start_at          # Start time offset
+---
+bool success
+string message
