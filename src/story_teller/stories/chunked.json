@@ -1,0 +1,12 @@
+{
+    "story": "This morning, I pressed my magical button and found myself standing in front of the Taj Mahal in India. The Taj Mahal is a beautiful white marble building with a large dome and four tall towers called minarets. It was built long ago by a king for his queen, and it's such a special place that many people come to visit. I was amazed by its sparkling beauty and how it stood tall against the bright blue sky.\n\nAs I admired the Taj Mahal, I noticed a young tour guide nearby. The guide looked a bit sad because the visitors were busy taking pictures and didn't seem to listen to their stories. I decided to help the guide become a respected leader by making the tours more exciting. <interaction vocab=\"leader\" role=\"new\">What does it mean to be a leader?</interaction> A leader is someone who guides others and helps them learn.\n\nI introduced myself to the guide, who explained how they had many exciting ideas about the Taj Mahal but felt ignored by the visitors. To ignore means to not pay attention, and that's how the visitors were acting. I suggested we investigate some lesser-known stories about the Taj Mahal to make the tours interesting. <interaction vocab=\"investigate\" role=\"easy\">What do you think we will find when we investigate the Taj Mahal?</interaction>",
+    "chunks": [
+        {
+            "type": "narrative",
+            "content": "This morning, I pressed my magical button and found myself standing in front of the Taj Mahal in India. The Taj Mahal is a beautiful white marble building with a large dome and four tall towers called minarets. It was built long ago by a king for his queen, and it's such a special place that many people come to visit. I was amazed by its sparkling beauty and how it stood tall against the bright blue sky.\n\nAs I admired the Taj Mahal, I noticed a young tour guide nearby. The guide looked a bit sad because the visitors were busy taking pictures and didn't seem to listen to their stories. I decided to help the guide become a respected leader by making the tours more exciting.",
+            "face_programs": [],
+            "body_programs": [],
+            "audio": null
+        }
+    ]
+}
