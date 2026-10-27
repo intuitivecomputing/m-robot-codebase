@@ -1,0 +1,9 @@
+{
+    "motors": {
+        "base_rotation": {"channel": 0,  "range": [-120, 120], "offset": 135, "servo_range": [0, 270]},
+        "head_pitch":    {"channel": 2,  "range": [-40, 40],   "offset": 105, "servo_range": [0, 270]},
+        "head_yaw":      {"channel": 4,  "range": [-90, 90],   "offset": 145, "servo_range": [0, 270]},
+        "arm_left":      {"channel": 8,  "range": [-45, 135],  "offset": 135, "servo_range": [0, 180]},
+        "arm_right":     {"channel": 10, "range": [-45, 135],  "offset": 45, "flip": true, "servo_range": [0, 180]}
+    }
+}

@@ -1,0 +1,22 @@
+# Copy the service file to systemd
+sudo cp /home/ella-deployment-6/Documents/pilot-deployment/face-server/storytelling_robot.service /etc/systemd/system/
+
+# Copy the poweroff oneshot unit to systemd
+sudo cp /home/ella-deployment-6/Documents/pilot-deployment/face-server/robot-poweroff.service /etc/systemd/system/
+
+# Ensure the poweroff script is executable
+sudo chmod +x /home/ella-deployment-6/Documents/pilot-deployment/face-server/robot-poweroff.sh
+
+# Install a narrowly-scoped sudoers rule so the face server can start the oneshot poweroff unit
+# (copy the example and validate with visudo)
+sudo cp /home/ella-deployment-6/Documents/pilot-deployment/face-server/sudoers-robot-poweroff.example /etc/sudoers.d/robot-poweroff
+sudo visudo -cf /etc/sudoers.d/robot-poweroff
+
+# Reload systemd daemon to recognize the new service
+sudo systemctl daemon-reload
+
+# (Optional) Enable the service to start on boot
+#sudo systemctl enable storytelling_robot.service
+
+# (Optional) Test it immediately
+#sudo systemctl start storytelling_robot.service

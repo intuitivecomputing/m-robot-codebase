@@ -1,0 +1,19 @@
+[Unit]
+Description=Storytelling Robot Service
+After=network.target graphical.target
+
+[Service]
+Type=simple
+User=ella-deployment-6
+Environment=DISPLAY=:0
+WorkingDirectory=/home/ella-deployment-6/Documents/pilot-deployment/face-server
+ExecStart=/home/ella-deployment-6/Documents/pilot-deployment/face-server/start-robot.sh
+Restart=on-failure
+RestartSec=2
+TimeoutStopSec=60
+KillMode=control-group
+KillSignal=SIGTERM
+SendSIGKILL=yes
+
+[Install]
+WantedBy=graphical.target

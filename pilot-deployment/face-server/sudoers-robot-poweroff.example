@@ -1,0 +1,5 @@
+# Install as: /etc/sudoers.d/robot-poweroff
+# IMPORTANT: use `visudo -cf /etc/sudoers.d/robot-poweroff` to validate.
+# Allows the service user to start ONLY the poweroff unit without a password.
+
+ella-deployment-6 ALL=(root) NOPASSWD: /usr/bin/systemctl start robot-poweroff.service

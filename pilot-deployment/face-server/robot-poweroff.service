@@ -1,0 +1,14 @@
+[Unit]
+Description=Robot Poweroff (stop stack then power off)
+Wants=network.target
+After=network.target
+
+[Service]
+Type=oneshot
+User=root
+# Stop the robot stack first; this should terminate Firefox/Node/Docker.
+ExecStart=/home/ella-deployment-6/Documents/pilot-deployment/face-server/robot-poweroff.sh
+TimeoutStartSec=120
+
+[Install]
+WantedBy=multi-user.target
