@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Face</title>
+    <link rel="stylesheet" href="face.css" />
+  </head>
+  <body>
+    <div class="face" id="face-root">
+      <div class="eye left">
+        <div class="eyelid upper"></div>
+        <div class="eyelid lower"></div>
+      </div>
+      <div class="mouth"></div>
+      <div class="eye right">
+        <div class="eyelid upper"></div>
+        <div class="eyelid lower"></div>
+      </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script type="module">
+      import { applyFaceCommand, createFaceRenderer, translateLegacyExpression } from "/sdk/index.js";
+
+      const face = createFaceRenderer(document.getElementById("face-root"));
+      window.face = face;
+      face.wake();
+
+      if (window.io) {
+        const socket = window.io();
+        socket.on("face-state", (payload) => {
+          try {
+            applyFaceCommand(face, payload);
+          } catch (error) {
+            console.warn("Ignored invalid face-state payload:", error.message);
+          }
+        });
+
+        socket.on("change-expression", (expression) => {
+          try {
+            applyFaceCommand(face, translateLegacyExpression(expression));
+          } catch (error) {
+            console.warn("Ignored invalid legacy payload:", error.message);
+          }
+        });
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Face SDK Test Bench</title>
+    <link rel="stylesheet" href="face.css" />
+    <style>
+      body {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 320px;
+      }
+
+      .face {
+        width: 100%;
+      }
+
+      #panel {
+        min-height: 100vh;
+        background: #0e1116;
+        border-left: 1px solid #1f2937;
+        color: #cbd5e1;
+        padding: 18px 16px 28px;
+        font: 12px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace;
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+      }
+
+      h1,
+      h2 {
+        margin: 0;
+        font-weight: 600;
+      }
+
+      h1 {
+        font-size: 14px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: #f8fafc;
+      }
+
+      h2 {
+        font-size: 10px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: #94a3b8;
+      }
+
+      .stack,
+      .grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+
+      .grid {
+        gap: 4px;
+      }
+
+      button,
+      input {
+        font: inherit;
+      }
+
+      button {
+        border: 1px solid #334155;
+        background: #111827;
+        color: #e2e8f0;
+        padding: 6px 9px;
+        cursor: pointer;
+      }
+
+      button.active {
+        background: #0f766e;
+        border-color: #14b8a6;
+      }
+
+      .slider {
+        display: grid;
+        grid-template-columns: 72px 1fr 36px;
+        align-items: center;
+        gap: 8px;
+      }
+
+      #log {
+        max-height: 220px;
+        overflow: auto;
+        background: #020617;
+        border: 1px solid #1e293b;
+        padding: 8px;
+        color: #94a3b8;
+      }
+
+      #log div + div {
+        margin-top: 6px;
+      }
+
+      @media (max-width: 980px) {
+        body {
+          grid-template-columns: 1fr;
+        }
+
+        #panel {
+          border-left: 0;
+          border-top: 1px solid #1f2937;
+          min-height: unset;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="face" id="face-root">
+      <div class="eye left">
+        <div class="eyelid upper"></div>
+        <div class="eyelid lower"></div>
+      </div>
+      <div class="mouth"></div>
+      <div class="eye right">
+        <div class="eyelid upper"></div>
+        <div class="eyelid lower"></div>
+      </div>
+    </div>
+
+    <aside id="panel">
+      <h1>Face SDK Test Bench</h1>
+
+      <section>
+        <h2>Lifecycle</h2>
+        <div class="stack">
+          <button data-action="wake">Wake</button>
+          <button data-action="sleep">Sleep</button>
+          <button data-action="reset">Reset</button>
+        </div>
+      </section>
+
+      <section>
+        <h2>Moods</h2>
+        <div class="grid" id="moods"></div>
+      </section>
+
+      <section>
+        <h2>Expressions</h2>
+        <div class="grid" id="expressions"></div>
+      </section>
+
+      <section>
+        <h2>Behaviors</h2>
+        <div class="stack">
+          <button data-toggle="blink">Blink Loop</button>
+          <button data-toggle="breathe">Breathing</button>
+          <button data-toggle="talk">Talking</button>
+          <button data-toggle="heartbeat">Heartbeat</button>
+        </div>
+      </section>
+
+      <section>
+        <h2>Sequences</h2>
+        <div class="grid" id="sequences"></div>
+      </section>
+
+      <section>
+        <h2>Reactive</h2>
+        <div class="slider">
+          <label for="mic">Mic</label>
+          <input id="mic" type="range" min="0" max="100" value="0" />
+          <span id="mic-value">0</span>
+        </div>
+        <div class="slider">
+          <label for="prox">Proximity</label>
+          <input id="prox" type="range" min="0" max="100" value="0" />
+          <span id="prox-value">0</span>
+        </div>
+        <div class="stack" style="margin-top:8px;">
+          <button id="gaze-toggle">Mouse Gaze</button>
+          <button id="clear-reactive">Clear</button>
+        </div>
+      </section>
+
+      <section>
+        <h2>Log</h2>
+        <div id="log"></div>
+      </section>
+    </aside>
+
+    <script type="module">
+      import { createFaceRenderer, expressions, moods, sequences } from "/sdk/index.js";
+
+      const face = createFaceRenderer(document.getElementById("face-root"));
+      window.face = face;
+
+      const logRoot = document.getElementById("log");
+      const moodRoot = document.getElementById("moods");
+      const expressionRoot = document.getElementById("expressions");
+      const sequenceRoot = document.getElementById("sequences");
+      const toggles = new Map();
+      const reactiveState = { mouthSy: 0, eyeSy: 0, eyeTx: 0, eyeTy: 0 };
+      let gazeEnabled = false;
+
+      function log(message) {
+        const row = document.createElement("div");
+        row.textContent = `${new Date().toLocaleTimeString()}  ${message}`;
+        logRoot.prepend(row);
+        while (logRoot.children.length > 14) {
+          logRoot.removeChild(logRoot.lastChild);
+        }
+      }
+
+      function syncBehaviorButtons() {
+        const state = face.getBehaviorState();
+        toggles.forEach((button, key) => {
+          const active =
+            (key === "blink" && state.blinking) ||
+            (key === "breathe" && state.breathing) ||
+            (key === "talk" && state.talking) ||
+            (key === "heartbeat" && state.heartbeat);
+          button.classList.toggle("active", Boolean(active));
+        });
+      }
+
+      function applyReactive() {
+        face.setReactive(reactiveState);
+      }
+
+      function renderButtons(root, values, onClick) {
+        values.forEach((value) => {
+          const button = document.createElement("button");
+          button.textContent = value;
+          button.addEventListener("click", () => onClick(value, button));
+          root.appendChild(button);
+        });
+      }
+
+      renderButtons(moodRoot, Object.keys(moods), (name, button) => {
+        moodRoot.querySelectorAll("button").forEach((item) => item.classList.remove("active"));
+        button.classList.add("active");
+        face.setMood(name);
+        syncBehaviorButtons();
+        log(`setMood("${name}")`);
+      });
+
+      const expressionOptions = Object.keys(expressions).flatMap((name) => ["low", "high"].map((intensity) => `${name}:${intensity}`));
+      renderButtons(expressionRoot, expressionOptions, (label, button) => {
+        expressionRoot.querySelectorAll("button").forEach((item) => item.classList.remove("active"));
+        button.classList.add("active");
+        const [name, intensity] = label.split(":");
+        face.setExpression(name, intensity);
+        log(`setExpression("${name}", "${intensity}")`);
+      });
+
+      renderButtons(sequenceRoot, Object.keys(sequences), (name, button) => {
+        sequenceRoot.querySelectorAll("button").forEach((item) => item.classList.remove("active"));
+        button.classList.add("active");
+        face.runSequence(name);
+        log(`runSequence("${name}")`);
+      });
+
+      document.querySelectorAll("[data-action]").forEach((button) => {
+        button.addEventListener("click", () => {
+          const action = button.dataset.action;
+          if (action === "wake") {
+            face.wake();
+          } else if (action === "sleep") {
+            face.sleep();
+          } else {
+            face.reset();
+          }
+          syncBehaviorButtons();
+          log(`${action}()`);
+        });
+      });
+
+      document.querySelectorAll("[data-toggle]").forEach((button) => {
+        const key = button.dataset.toggle;
+        toggles.set(key, button);
+        button.addEventListener("click", () => {
+          const state = face.getBehaviorState();
+          if (key === "blink") {
+            state.blinking ? face.stopBlinking() : face.startBlinking();
+          } else if (key === "breathe") {
+            state.breathing ? face.stopBreathing() : face.startBreathing();
+          } else if (key === "talk") {
+            state.talking ? face.stopTalking() : face.startTalking();
+          } else if (key === "heartbeat") {
+            state.heartbeat ? face.stopHeartbeat() : face.startHeartbeat();
+          }
+          syncBehaviorButtons();
+          log(`${key} toggled`);
+        });
+      });
+
+      const micInput = document.getElementById("mic");
+      const proxInput = document.getElementById("prox");
+      micInput.addEventListener("input", () => {
+        document.getElementById("mic-value").textContent = micInput.value;
+        reactiveState.mouthSy = (Number(micInput.value) / 100) * 0.55;
+        applyReactive();
+      });
+      proxInput.addEventListener("input", () => {
+        document.getElementById("prox-value").textContent = proxInput.value;
+        reactiveState.eyeSy = ((Number(proxInput.value) - 50) / 50) * 0.4;
+        applyReactive();
+      });
+
+      document.getElementById("gaze-toggle").addEventListener("click", (event) => {
+        gazeEnabled = !gazeEnabled;
+        event.currentTarget.classList.toggle("active", gazeEnabled);
+        if (!gazeEnabled) {
+          reactiveState.eyeTx = 0;
+          reactiveState.eyeTy = 0;
+          applyReactive();
+        }
+        log(`mouse gaze ${gazeEnabled ? "enabled" : "disabled"}`);
+      });
+
+      document.getElementById("clear-reactive").addEventListener("click", () => {
+        reactiveState.mouthSy = 0;
+        reactiveState.eyeSy = 0;
+        reactiveState.eyeTx = 0;
+        reactiveState.eyeTy = 0;
+        micInput.value = "0";
+        proxInput.value = "0";
+        document.getElementById("mic-value").textContent = "0";
+        document.getElementById("prox-value").textContent = "0";
+        face.clearReactive();
+        log("clearReactive()");
+      });
+
+      document.addEventListener("mousemove", (event) => {
+        if (!gazeEnabled || event.clientX > window.innerWidth - 320) {
+          return;
+        }
+        const cx = (window.innerWidth - 320) / 2;
+        const cy = window.innerHeight / 2;
+        reactiveState.eyeTx = ((event.clientX - cx) / cx) * 14;
+        reactiveState.eyeTy = ((event.clientY - cy) / cy) * 9;
+        applyReactive();
+      });
+
+      face.wake();
+      syncBehaviorButtons();
+      log("Face renderer ready");
+    </script>
+  </body>
+</html>

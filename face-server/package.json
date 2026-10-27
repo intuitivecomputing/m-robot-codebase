@@ -1,0 +1,24 @@
+{
+  "name": "expressive-face-server",
+  "version": "1.0.0",
+  "description": "SDK and server for rendering, animating, and remotely controlling robotic face expressions.",
+  "type": "module",
+  "main": "./src/index.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node tests/sdk.test.js"
+  },
+  "keywords": [
+    "robotics",
+    "animation",
+    "sdk",
+    "face"
+  ],
+  "author": "OpenAI Codex",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "socket.io": "^4.7.2"
+  }
+}
